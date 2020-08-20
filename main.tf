@@ -6,6 +6,17 @@ variable "tfe_token" {
   type = string
 }
 
+variable "team_email_addresses" {
+  type = list(string)
+}
+
+# 'owners' is a special team that can't be altered.
+# It will always exist.
+data "tfe_team" "voxpupuli-owners" {
+  name         = "owners"
+  organization = "VoxPupuli"
+}
+
 terraform {
   required_version = "~> 0.13.0"
 
@@ -28,6 +39,20 @@ resource "tfe_organization" "voxpupuli" {
   name                     = "VoxPupuli"
   email                    = "pmc@voxpupuli.org"
   collaborator_auth_policy = "two_factor_mandatory"
+}
+
+resource "tfe_organization_membership" "voxpupuli_members" {
+  for_each = toset(var.team_email_addresses)
+
+  organization = "VoxPupuli"
+  email        = each.key
+}
+
+resource "tfe_team_organization_member" "voxpupuli_owner_member" {
+  for_each = toset(var.team_email_addresses)
+
+  team_id                    = data.tfe_team.voxpupuli-owners.id
+  organization_membership_id = tfe_organization_membership.voxpupuli_members[each.key].id
 }
 
 resource "tfe_workspace" "voxpupuli" {
