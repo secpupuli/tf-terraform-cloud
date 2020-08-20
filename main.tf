@@ -25,8 +25,9 @@ provider "tfe" {
 }
 
 resource "tfe_organization" "voxpupuli" {
-  name  = "VoxPupuli"
-  email = "pmc@voxpupuli.org"
+  name                     = "VoxPupuli"
+  email                    = "pmc@voxpupuli.org"
+  collaborator_auth_policy = "two_factor_mandatory"
 }
 
 resource "tfe_workspace" "voxpupuli" {
