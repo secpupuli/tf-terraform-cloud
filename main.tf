@@ -56,15 +56,27 @@ resource "tfe_team_organization_member" "voxpupuli_owner_member" {
 }
 
 resource "tfe_workspace" "voxpupuli" {
-  name         = "github-voxpupuli"
-  organization = "VoxPupuli"
-  operations   = false
+  name              = "github-voxpupuli"
+  organization      = "VoxPupuli"
+  operations        = true
+  terraform_version = "0.13.0"
+  vcs_repo {
+    identifier     = "secpupuli/tf-voxpupuli"
+    branch         = "main"
+    oauth_token_id = var.github_oauth_token_id
+  }
 }
 
 resource "tfe_workspace" "secpupuli" {
-  name         = "github-secpupuli"
-  organization = "VoxPupuli"
-  operations   = false
+  name              = "github-secpupuli"
+  organization      = "VoxPupuli"
+  operations        = true
+  terraform_version = "0.13.0"
+  vcs_repo {
+    identifier     = "secpupuli/tf-secpupuli"
+    branch         = "main"
+    oauth_token_id = var.github_oauth_token_id
+  }
 }
 
 resource "tfe_workspace" "terraform_cloud" {
